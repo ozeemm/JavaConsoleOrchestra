@@ -1,10 +1,6 @@
 package my_package;
 
-import com.sun.deploy.util.DeployUIManager;
-
-import java.util.ArrayList;
-
-public class DrumSound {
+public class NonNoteSound {
     /*
     private static ArrayList<DrumSound> possibleSounds; // Доступные звуки
     private String sound;

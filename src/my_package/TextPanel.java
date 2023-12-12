@@ -54,7 +54,9 @@ public class TextPanel {
 
     // Вывод элементов меню
     private void printPanel(){
-        System.out.println(getFormattedTitle());
+        if(title != null) {
+            System.out.println(getFormattedTitle());
+        }
         for(int i = 0; i < variants.length; i++){
             System.out.println((i+1) + ". " + variants[i]);
         }
@@ -89,9 +91,9 @@ public class TextPanel {
         return readChoice();
     }
 
-    /*
+
     // Считывание положительного числа
-    public int readPositiveInt(String title){
+    public static int readInt(String title){
         System.out.print(title + ": ");
         Scanner sc = new Scanner(System.in);
         int number;
@@ -100,31 +102,56 @@ public class TextPanel {
         }
         catch (NumberFormatException ex){
             System.out.println("Введите число");;
-            return readPositiveInt(title);
+            return readInt(title);
         }
 
-        if(number > 0){
+        if(number >= 0){
             return number;
         }
         else {
-            System.out.println("Число должно быть положительным");
-            return readPositiveInt(title);
+            System.out.println("Число должно быть неотрицательным");
+            return readInt(title);
         }
     }
 
-    // Считывание строки
-    public String readFileName(String title, String extension){
+    public static float readFloat(String title){
         System.out.print(title + ": ");
         Scanner sc = new Scanner(System.in);
-        String fileName = sc.nextLine();
-        String lastSymbols = "";
+        float number;
+        try {
+            number = Float.parseFloat(sc.nextLine()); // Для очистки буфера сканера
+        }
+        catch (NumberFormatException ex){
+            System.out.println("Введите число");;
+            return readFloat(title);
+        }
 
-        if(fileName.length() > extension.length())
-            lastSymbols = fileName.substring(fileName.length() - extension.length());
-
-        if(!lastSymbols.equals(extension))
-            fileName += extension;
-        return fileName;
+        if(number >= 0){
+            return number;
+        }
+        else {
+            System.out.println("Число должно быть неотрицательным");
+            return readFloat(title);
+        }
     }
-    */
+
+    public static String readString(String title){
+        System.out.print(title + ": ");
+        Scanner sc = new Scanner(System.in);
+
+        return sc.nextLine();
+    }
+
+    public static boolean readYesOrNo(String title){
+        System.out.print(title + ": ");
+        Scanner sc = new Scanner(System.in);
+        String val = sc.nextLine().toLowerCase();
+
+        if(val.equals("да") || val.equals("true"))
+            return true;
+        else if(val.equals("нет") || val.equals("false")){
+            return false;
+        }
+        else return readYesOrNo(title);
+    }
 }
