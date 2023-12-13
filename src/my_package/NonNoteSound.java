@@ -1,15 +1,20 @@
 package my_package;
 
+import java.util.ArrayList;
+
 public class NonNoteSound {
-    /*
-    private static ArrayList<DrumSound> possibleSounds; // Доступные звуки
+    private static ArrayList<String> possibleSounds = new ArrayList<String>(); // Доступные звуки
     private String sound;
 
-    public DrumSound() {
-        setSound(possibleSounds.get(0).getSound());
+    public NonNoteSound() {
+        if(!possibleSounds.isEmpty())
+            setSound(possibleSounds.get(0));
     }
-    public DrumSound(String sound) {
+    public NonNoteSound(String sound) {
         setSound(sound);
+
+        if(!possibleSounds.contains(sound))
+            addPossibleSound(sound);
     }
 
     public void setSound(String sound){
@@ -20,18 +25,20 @@ public class NonNoteSound {
         return sound;
     }
 
-    public static void addPossibleSound(DrumSound sound) {
+    @Override
+    public String toString() {
+        return getSound();
+    }
+
+    public static void addPossibleSound(String sound){
         possibleSounds.add(sound);
     }
 
-    public static void deletePossibleSound(DrumSound sound){
-        possibleSounds.remove(sound);
+    public static void deletePossibleSound(NonNoteSound sound){
+        possibleSounds.remove(sound.getSound());
     }
 
-    public static ArrayList<DrumSound> getPossibleSounds(){
+    public static ArrayList<String> getPossibleSounds(){
         return possibleSounds;
     }
-
-    public static void boo
-     */
 }
