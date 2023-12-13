@@ -1,19 +1,19 @@
 package my_package;
 
-import javax.sound.midi.Instrument;
+import sun.applet.resources.MsgAppletViewer;
+
 import javax.xml.soap.Text;
-import javax.xml.transform.TransformerException;
-import java.lang.reflect.Array;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 public class MenuController {
 
     private static Orchestra orchestra;
+    private static boolean isRuNotes; // Формат отображения нот
 
     // Начальные значения
     private static void initTestData(){
         orchestra = new Orchestra();
+        isRuNotes = false;
         orchestra.setName("Солнышко");
 
         // Нотные инструменты
@@ -113,10 +113,6 @@ public class MenuController {
         }
         orchestra.addInstrument(conductorStick);
 
-        for(int i = 0; i < orchestra.getInstruments().size(); i++){
-            System.out.println(i + " | " + orchestra.getInstruments().get(i).getName());
-        }
-
         // Музыканты
         Musician musician = new Musician();
         musician.setName("Иванов Иван");
@@ -143,14 +139,14 @@ public class MenuController {
         musician.setName("Трубов Трубач");
         musician.setAge(37);
         musician.setJoiningOrchestraYear(2016);
-        musician.setInstrument(orchestra.getInstruments().get(8)); // Труба
+        musician.setInstrument(orchestra.getInstruments().get(6)); // Труба
         orchestra.addMusician(musician);
 
         musician = new Musician();
         musician.setName("Трубов Трубач младший");
         musician.setAge(13);
         musician.setJoiningOrchestraYear(2018);
-        musician.setInstrument(orchestra.getInstruments().get(8)); // Труба
+        musician.setInstrument(orchestra.getInstruments().get(6)); // Труба
         orchestra.addMusician(musician);
 
         musician = new Musician();
@@ -174,10 +170,10 @@ public class MenuController {
     }
 
     private static void printOrchestraPanel() {
-        TextPanel panel = new TextPanel("Оркестр " + orchestra.getName(), new String[]{"Список участников", "Список инструментов"});
+        TextPanel panel = new TextPanel("Оркестр \"" + orchestra.getName() + "\"", new String[]{"Список музыкантов", "Список инструментов", "Настройки", "Сыграть всем оркестром"});
         int choice = panel.getChoice();
         switch (choice){
-            case 1: // Список участников
+            case 1: // Список музыкантов
                 printMusicians();
                 break;
 
@@ -185,17 +181,117 @@ public class MenuController {
                 printInstrumentsTypes();
                 break;
 
+            case 3: // Настройки
+                settingsPanel();
+                break;
             // 0 не обрабатываем, так как при нём подразумевается выход из программы, а он и так будет, т.к. метод завершится
+        }
+    }
+
+    private static void settingsPanel(){
+        String notesFormat = (isRuNotes ? "До-Ре-Ми-Фа-Соль-Ля-Си" : "CDEFGAB");
+
+        TextPanel panel = new TextPanel("Настройки", new String[]{ "Название: " + orchestra.getName(), "Формат отображения нот: " + notesFormat });
+        int choice = panel.getChoice();
+
+        switch (choice){
+            case 0: // Назад
+                printOrchestraPanel();
+                break;
+
+            case 1: // Изменить название
+                String newName = TextPanel.readString("Новое имя оркестра");
+                orchestra.setName(newName);
+                System.out.println("Имя оркестра изменено");
+                settingsPanel();
+                break;
+
+            case 2: // Изменить формат отображения нот
+                TextPanel noteFormatPanel = new TextPanel("Формат отображения нот", new String[]{"До-Ре-Ми-Фа-Соль-Ля-Си", "CDEFGAB"}, false);
+                int noteFormat = noteFormatPanel.getChoice();
+                isRuNotes = (noteFormat == 1);
+                System.out.println("Формат отображения нот изменён");
+                settingsPanel();
+                break;
         }
     }
 
     private static void printMusicians(){
         ArrayList<Musician> musicians = orchestra.getMusicians();
 
-        for(int i = 0; i < musicians.size(); i++){
-            System.out.print(i+1 + ". ");
-            System.out.println(musicians.get(i).getName() + " : " + musicians.get(i).getInstrument().getName());
+        ArrayList<String> panelVariants = new ArrayList<String>();
+        panelVariants.add("Добавить музыканта");
+
+        if(!musicians.isEmpty()) {
+            panelVariants.add("Удалить музыканта");
+
+            for (Musician musician : musicians) {
+                panelVariants.add(musician.getName() + " | " + musician.getInstrument().getName());
+            }
         }
+
+        TextPanel panel = new TextPanel("Список музыкантов", panelVariants.toArray(new String[panelVariants.size()]));
+        int choice = panel.getChoice();
+
+        if(choice == 0){ // Назад
+            printOrchestraPanel();
+        }
+        else if(choice == 1){ // Добавление
+            orchestra.addMusician(readMusician());
+            System.out.println("Новый музыкант добавлен");
+            printMusicians();
+        }
+        else if(choice == 2){ // Удаление
+            int musicianNum = 0;
+            do{
+                musicianNum = TextPanel.readInt("Номер музыканта") - 3;
+            } while (musicianNum < 0 || musicianNum >= musicians.size());
+            System.out.println("Удалён музыкант: " + musicians.get(musicianNum).getName());
+            orchestra.deleteMusicican(musicians.get(musicianNum));
+            printMusicians();
+        }
+        else if (choice > 2){ // Подробнее
+            Musician musician = musicians.get(choice-3);
+            printMusicianInfo(musician);
+            printMusicians();
+        }
+    }
+
+    private static void printMusicianInfo(Musician musician){
+        System.out.println("Имя: " + musician.getName());
+        System.out.println("Возраст: " + musician.getAge());
+        System.out.println("Год вступления в оркестр: " + musician.getJoiningOrchestraYear());
+        System.out.println("Инструмент: " + musician.getInstrument().getName());
+
+        if(musician.getInstrument() instanceof NoteInstrument)
+            playNotesPanel((NoteInstrument) musician.getInstrument());
+        else if(musician.getInstrument() instanceof NonNoteInstrument)
+            playNonNotesPanel((NonNoteInstrument) musician.getInstrument());
+    }
+
+    private static Musician readMusician(){
+        Musician musician = new Musician();
+
+        String name = TextPanel.readString("Имя музыканта");
+        musician.setName(name);
+        int age = TextPanel.readInt("Возраст");
+        musician.setAge(age);
+        int joiningOrchestraYear = TextPanel.readInt("Год вступления в оркестр");
+        musician.setJoiningOrchestraYear(joiningOrchestraYear);
+
+        System.out.println("Доступные инструменты:");
+        ArrayList<MusicInstrument> instruments = orchestra.getInstruments();
+        for(int i = 0; i < instruments.size(); i++){
+            System.out.print(i+1 + ". ");
+            System.out.println(instruments.get(i).getName());
+        }
+        int instrumentNum = 0;
+        do{
+            instrumentNum = TextPanel.readInt("Номер инструмента") - 1;
+        } while (instrumentNum < 0 || instrumentNum >= instruments.size());
+        musician.setInstrument(instruments.get(instrumentNum));
+
+        return musician;
     }
 
     private static void printInstrumentsTypes() {
@@ -255,7 +351,8 @@ public class MenuController {
 
         TextPanel instrumentsPanel = new TextPanel(title, panelVariants.toArray(new String[panelVariants.size()]));
         int choice = instrumentsPanel.getChoice();
-        if(choice > 2) {
+
+        if(choice > 2) { // Подробнее
             MusicInstrument instrument = instruments.get(choice-3);
             if(instrument instanceof NoteInstrument)
                 printNoteInstrumentInfo((NoteInstrument) instrument);
@@ -264,7 +361,7 @@ public class MenuController {
 
             printAllInstruments(instruments, instrumentsType);
         }
-        else if(choice == 2){
+        else if(choice == 2){ // Удаление
             int instrumentNum = 0;
             do{
                 instrumentNum = TextPanel.readInt("Номер инструмента") - 3;
@@ -274,7 +371,7 @@ public class MenuController {
             instruments.remove(instruments.get(instrumentNum));
             printAllInstruments(instruments, instrumentsType);
         }
-        else if(choice == 1){
+        else if(choice == 1){ // Добавление
             if(instrumentsType == 0){
                 StringedInstrument instrument = readStringInstrument();
                 orchestra.addInstrument(instrument);
@@ -296,10 +393,10 @@ public class MenuController {
                 instruments.add(instrument);
             }
 
-            System.out.println("Новый инструмент добавлен!");
+            System.out.println("Новый инструмент добавлен");
             printAllInstruments(instruments, instrumentsType);
         }
-        else if(choice == 0){
+        else if(choice == 0){ // Назад
             printInstrumentsTypes();
         }
     }
@@ -351,9 +448,9 @@ public class MenuController {
         instrument.setName(name);
         boolean isAcoustic = TextPanel.readYesOrNo("Акустический ли инструмент");
         instrument.setIsAcoustic(isAcoustic);
-        String minNoteText = TextPanel.readString("Минимальная нота");
+        String minNoteText = TextPanel.readString("Минимальная нота (в буквенной форме)");
         Note minNote = new Note(minNoteText.split(" ")[0], Integer.parseInt(minNoteText.split(" ")[1]));
-        String maxNoteText = TextPanel.readString("Максимальная нота");
+        String maxNoteText = TextPanel.readString("Максимальная нота (в буквенной форме)");
         Note maxNote = new Note(maxNoteText.split(" ")[0], Integer.parseInt(maxNoteText.split(" ")[1]));
         instrument.setNoteRange(minNote, maxNote);
         int strings = TextPanel.readInt("Количество струн");
@@ -375,9 +472,9 @@ public class MenuController {
         instrument.setName(name);
         boolean isAcoustic = TextPanel.readYesOrNo("Акустический ли инструмент");
         instrument.setIsAcoustic(isAcoustic);
-        String minNoteText = TextPanel.readString("Минимальная нота");
+        String minNoteText = TextPanel.readString("Минимальная нота (в буквенной форме)");
         Note minNote = new Note(minNoteText.split(" ")[0], Integer.parseInt(minNoteText.split(" ")[1]));
-        String maxNoteText = TextPanel.readString("Максимальная нота");
+        String maxNoteText = TextPanel.readString("Максимальная нота (в буквенной форме)");
         Note maxNote = new Note(maxNoteText.split(" ")[0], Integer.parseInt(maxNoteText.split(" ")[1]));
         instrument.setNoteRange(minNote, maxNote);
 
@@ -394,9 +491,9 @@ public class MenuController {
         instrument.setName(name);
         boolean isAcoustic = TextPanel.readYesOrNo("Акустический ли инструмент");
         instrument.setIsAcoustic(isAcoustic);
-        String minNoteText = TextPanel.readString("Минимальная нота");
+        String minNoteText = TextPanel.readString("Минимальная нота (в буквенной форме)");
         Note minNote = new Note(minNoteText.split(" ")[0], Integer.parseInt(minNoteText.split(" ")[1]));
-        String maxNoteText = TextPanel.readString("Максимальная нота");
+        String maxNoteText = TextPanel.readString("Максимальная нота (в буквенной форме)");
         Note maxNote = new Note(maxNoteText.split(" ")[0], Integer.parseInt(maxNoteText.split(" ")[1]));
         instrument.setNoteRange(minNote, maxNote);
 
@@ -472,7 +569,7 @@ public class MenuController {
     private static void printNoteInstrumentInfo(NoteInstrument instrument){
         System.out.println("Название: " + instrument.getName());
         System.out.println("Акустический: " + (instrument.getIsAcoustic() ? "Да" : "Нет"));
-        System.out.println("Нотный диапазон: от " + instrument.getMinNote().toString() + " до " + instrument.getMaxNote().toString());
+        System.out.println("Нотный диапазон: от " + (isRuNotes ? instrument.getMinNote().toRuString() : instrument.getMinNote().toString()) + " до " + (isRuNotes ? instrument.getMaxNote().toRuString(): instrument.getMaxNote().toString()));
 
         if(instrument instanceof StringedInstrument)
             printInstrumentInfo((StringedInstrument) instrument);
@@ -487,13 +584,14 @@ public class MenuController {
         System.out.println("Количество ладов: " + instrument.getFrets());
         System.out.println("Смычок: " + (instrument.getIsBow() ? "Да" : "Нет"));
         System.out.println("Шанс лопания струны: " + instrument.getStringBreakChance() * 100 + "%");
-        playNotesPanel(instrument, "Струна лопнула");
+        playNotesPanel(instrument
+        );
     }
 
     private static void printInstrumentInfo(KeyboardInstrument instrument){
         System.out.println("Тип: Клавишный");
         System.out.println("Количество клавиш: " + instrument.getKeys());
-        playNotesPanel(instrument, null);
+        playNotesPanel(instrument);
     }
 
     private static void printInstrumentInfo(WindInstrument instrument){
@@ -502,20 +600,26 @@ public class MenuController {
         System.out.println("Тип: " + instrument.getType());
         System.out.println("Шанс того, что музыканту не хватит воздуха: " + instrument.getNotEnoughBreathChance() * 100 + "%");
 
-        playNotesPanel(instrument, "Музыканту не хватило дыхания");
+        playNotesPanel(instrument);
     }
 
-    private static void playNotesPanel(NoteInstrument instrument, String msgIfNoteIsNull) {
+    private static void playNotesPanel(NoteInstrument instrument) {
         int choice = 0;
         do {
             TextPanel panel = new TextPanel("Действия", new String[]{"Сыграть на инструменте"});
             choice = panel.getChoice();
             if(choice == 1){
                 Note randSound = instrument.playSound();
-                if(randSound == null)
+                if(randSound == null) {
+                    String msgIfNoteIsNull = "";
+                    if(instrument instanceof StringedInstrument)
+                        msgIfNoteIsNull = "Струна лопнула";
+                    else if(instrument instanceof WindInstrument)
+                        msgIfNoteIsNull = "Музыканту не хватило дыхания";
                     System.out.println("Не удалось сыграть ноту: " + msgIfNoteIsNull);
+                }
                 else
-                    System.out.println("Инструмент сыграл ноту: " + randSound.toRuString() + " октавы");
+                    System.out.println("Сыграна нота: " + (isRuNotes ? randSound.toRuString() : randSound.toString()) + " октавы");
             }
         } while (choice != 0);
     }
@@ -540,7 +644,7 @@ public class MenuController {
             choice = panel.getChoice();
             if(choice == 1){
                 NonNoteSound randSound = instrument.playSound();
-                System.out.println("Инструмент сыграл звук: " + randSound.toString());
+                System.out.println("Сыгран звук: " + randSound.toString());
             }
         } while (choice != 0);
     }
