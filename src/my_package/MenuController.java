@@ -1,8 +1,6 @@
 package my_package;
 
-import sun.applet.resources.MsgAppletViewer;
-
-import javax.xml.soap.Text;
+import orchestra_package.*;
 import java.util.ArrayList;
 
 public class MenuController {
@@ -170,7 +168,7 @@ public class MenuController {
     }
 
     private static void printOrchestraPanel() {
-        TextPanel panel = new TextPanel("Оркестр \"" + orchestra.getName() + "\"", new String[]{"Список музыкантов", "Список инструментов", "Настройки", "Сыграть всем оркестром"});
+        TextPanel panel = new TextPanel("Оркестр \"" + orchestra.getName() + "\"", new String[]{"Список музыкантов", "Список инструментов", "Настройки", "Сыграть всем оркестром", "Выход"}, false);
         int choice = panel.getChoice();
         switch (choice){
             case 1: // Список музыкантов
@@ -182,16 +180,20 @@ public class MenuController {
                 break;
 
             case 3: // Настройки
-                settingsPanel();
+                printSettingsPanel();
                 break;
-            // 0 не обрабатываем, так как при нём подразумевается выход из программы, а он и так будет, т.к. метод завершится
+            case 4: // Сыграть всем оркестром
+                System.out.println("*играют*"); // Переделать
+                printOrchestraPanel();
+                break;
+            // 5 не обрабатываем, так как при нём подразумевается выход из программы, а он и так будет, т.к. метод завершится
         }
     }
 
-    private static void settingsPanel(){
+    private static void printSettingsPanel(){
         String notesFormat = (isRuNotes ? "До-Ре-Ми-Фа-Соль-Ля-Си" : "CDEFGAB");
 
-        TextPanel panel = new TextPanel("Настройки", new String[]{ "Название: " + orchestra.getName(), "Формат отображения нот: " + notesFormat });
+        TextPanel panel = new TextPanel("Настройки", new String[]{ "Название оркестра: " + orchestra.getName(), "Формат отображения нот: " + notesFormat });
         int choice = panel.getChoice();
 
         switch (choice){
@@ -203,7 +205,7 @@ public class MenuController {
                 String newName = TextPanel.readString("Новое имя оркестра");
                 orchestra.setName(newName);
                 System.out.println("Имя оркестра изменено");
-                settingsPanel();
+                printSettingsPanel();
                 break;
 
             case 2: // Изменить формат отображения нот
@@ -211,7 +213,7 @@ public class MenuController {
                 int noteFormat = noteFormatPanel.getChoice();
                 isRuNotes = (noteFormat == 1);
                 System.out.println("Формат отображения нот изменён");
-                settingsPanel();
+                printSettingsPanel();
                 break;
         }
     }

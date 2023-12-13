@@ -61,7 +61,7 @@ public class TextPanel {
             System.out.println((i+1) + ". " + variants[i]);
         }
         if(isBackVariant){
-            System.out.println("0. Выход");
+            System.out.println("0. Назад");
         }
     }
 

@@ -1,7 +1,6 @@
-package my_package;
+package orchestra_package;
 
 import java.util.ArrayList;
-import java.util.MissingFormatArgumentException;
 
 public class Orchestra {
     private String name;

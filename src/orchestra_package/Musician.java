@@ -1,4 +1,4 @@
-package my_package;
+package orchestra_package;
 
 public class Musician {
     private String name;
