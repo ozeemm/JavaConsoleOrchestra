@@ -14,6 +14,7 @@ public class MenuController {
     // Начальные значения
     private static void initTestData(){
         orchestra = new Orchestra();
+        orchestra.setName("Солнышко");
 
         // Нотные инструменты
         StringedInstrument guitar = new StringedInstrument();
@@ -111,11 +112,90 @@ public class MenuController {
             conductorStick.addSound(new NonNoteSound(possibleSounds.get(i)));
         }
         orchestra.addInstrument(conductorStick);
+
+        for(int i = 0; i < orchestra.getInstruments().size(); i++){
+            System.out.println(i + " | " + orchestra.getInstruments().get(i).getName());
+        }
+
+        // Музыканты
+        Musician musician = new Musician();
+        musician.setName("Иванов Иван");
+        musician.setAge(27);
+        musician.setJoiningOrchestraYear(2020);
+        musician.setInstrument(orchestra.getInstruments().get(1)); // Электрогитара
+        orchestra.addMusician(musician);
+
+        musician = new Musician();
+        musician.setName("Александров Александр");
+        musician.setAge(26);
+        musician.setJoiningOrchestraYear(2020);
+        musician.setInstrument(orchestra.getInstruments().get(7)); // Барабанная установка №1
+        orchestra.addMusician(musician);
+
+        musician = new Musician();
+        musician.setName("Сергеев Сергей");
+        musician.setAge(47);
+        musician.setJoiningOrchestraYear(2014);
+        musician.setInstrument(orchestra.getInstruments().get(8)); // Дирижёрская палочка
+        orchestra.addMusician(musician);
+
+        musician = new Musician();
+        musician.setName("Трубов Трубач");
+        musician.setAge(37);
+        musician.setJoiningOrchestraYear(2016);
+        musician.setInstrument(orchestra.getInstruments().get(8)); // Труба
+        orchestra.addMusician(musician);
+
+        musician = new Musician();
+        musician.setName("Трубов Трубач младший");
+        musician.setAge(13);
+        musician.setJoiningOrchestraYear(2018);
+        musician.setInstrument(orchestra.getInstruments().get(8)); // Труба
+        orchestra.addMusician(musician);
+
+        musician = new Musician();
+        musician.setName("Саксофонов Саксофонист");
+        musician.setAge(34);
+        musician.setJoiningOrchestraYear(2017);
+        musician.setInstrument(orchestra.getInstruments().get(5)); // Саксофон
+        orchestra.addMusician(musician);
+
+        musician = new Musician();
+        musician.setName("Петров Пётр");
+        musician.setAge(19);
+        musician.setJoiningOrchestraYear(2021);
+        musician.setInstrument(orchestra.getInstruments().get(3)); // Рояль
+        orchestra.addMusician(musician);
     }
 
     public static void start(){
         initTestData();
-        printInstrumentsTypes();
+        printOrchestraPanel();
+    }
+
+    private static void printOrchestraPanel() {
+        TextPanel panel = new TextPanel("Оркестр " + orchestra.getName(), new String[]{"Список участников", "Список инструментов"});
+        int choice = panel.getChoice();
+        switch (choice){
+            case 1: // Список участников
+                printMusicians();
+                break;
+
+            case 2: // Список инструментов
+                printInstrumentsTypes();
+                break;
+
+            // 0 не обрабатываем, так как при нём подразумевается выход из программы, а он и так будет, т.к. метод завершится
+        }
+    }
+
+    private static void printMusicians(){
+        ArrayList<Musician> musicians = orchestra.getMusicians();
+
+        for(int i = 0; i < musicians.size(); i++){
+            System.out.print(i+1 + ". ");
+            System.out.println(musicians.get(i).getName() + " : " + musicians.get(i).getInstrument().getName());
+        }
     }
 
     private static void printInstrumentsTypes() {
@@ -127,26 +207,28 @@ public class MenuController {
         switch (choice){
             case 1:
                 instruments.addAll(getStringedInstruments());
+                printAllInstruments(instruments, choice-1);
                 break;
 
             case 2:
                 instruments.addAll(getKeyboardInstruments());
+                printAllInstruments(instruments, choice-1);
                 break;
 
             case 3:
                 instruments.addAll(getWindInstruments());
+                printAllInstruments(instruments, choice-1);
                 break;
 
             case 4:
                 instruments.addAll(getNonNoteInstruments());
+                printAllInstruments(instruments, choice-1);
                 break;
 
             case 0: // Назад
-
+                printOrchestraPanel();
                 break;
         }
-
-        printAllInstruments(instruments, choice-1);
     }
 
     private static void printAllInstruments(ArrayList<MusicInstrument> instruments, int instrumentsType) {
