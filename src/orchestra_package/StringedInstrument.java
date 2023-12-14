@@ -1,5 +1,7 @@
 package orchestra_package;
 
+import org.w3c.dom.traversal.NodeIterator;
+
 public class StringedInstrument extends NoteInstrument{
 
     private int strings; // Кол-во струн
@@ -35,7 +37,7 @@ public class StringedInstrument extends NoteInstrument{
     @Override
     public Note playSound() {
         if(Math.random() < stringBreakChance){
-            return null;
+            return Note.getNullNote();
         }
 
         return Note.getRandomNote(getMinNote(), getMaxNote());

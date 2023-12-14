@@ -152,6 +152,9 @@ public class TextPanel {
         else if(val.equals("нет") || val.equals("false")){
             return false;
         }
-        else return readYesOrNo(title);
+        else{
+            System.out.println("Вводите только да/нет или true/false");
+            return readYesOrNo(title);
+        }
     }
 }

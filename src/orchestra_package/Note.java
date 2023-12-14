@@ -86,10 +86,27 @@ public class Note{
 
     @Override
     public String toString() {
-        return (this.note + ' ' + this.octave);
+        if(isNull()) {
+            return null;
+        }
+        else
+            return (this.note + ' ' + this.octave);
     }
 
     public String toRuString(){
-        return (this.getRuNote() + ' ' + this.octave);
+        if(isNull())
+            return null;
+        else
+            return (this.getRuNote() + ' ' + this.octave);
+    }
+
+    public static Note getNullNote(){
+        Note note = new Note();
+        note.setNote("null");
+        return note;
+    }
+
+    public boolean isNull(){
+        return (this.note == "null");
     }
 }

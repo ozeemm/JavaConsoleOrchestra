@@ -19,4 +19,6 @@ public abstract class MusicInstrument {
     public void setIsAcoustic(boolean isAcoustic){
         this.isAcoustic = isAcoustic;
     }
+
+    public abstract String playInOrchestra(boolean isRuNotes);
 }

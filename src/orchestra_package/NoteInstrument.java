@@ -18,4 +18,14 @@ public abstract class NoteInstrument extends MusicInstrument{
     }
 
     public abstract Note playSound();
+
+    public String playInOrchestra(boolean isRuNotes) {
+        Note note = playSound();
+        if(note == null)
+            return null;
+        else if(isRuNotes)
+            return playSound().toRuString();
+        else
+            return playSound().toString();
+    }
 }

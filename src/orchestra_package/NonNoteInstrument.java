@@ -23,4 +23,9 @@ public class NonNoteInstrument extends MusicInstrument {
         Random rand = new Random();
         return mySounds.get(rand.nextInt(mySounds.size()));
     }
+
+    @Override
+    public String playInOrchestra(boolean isRuNotes) {
+        return playSound().toString();
+    }
 }
