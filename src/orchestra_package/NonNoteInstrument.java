@@ -25,7 +25,7 @@ public class NonNoteInstrument extends MusicInstrument {
     }
 
     @Override
-    public String playInOrchestra(boolean isRuNotes) {
+    public String orchestraPlay(boolean isRuNotes) {
         return playSound().toString();
     }
 }

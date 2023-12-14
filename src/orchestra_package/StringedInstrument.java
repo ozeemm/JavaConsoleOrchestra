@@ -37,7 +37,8 @@ public class StringedInstrument extends NoteInstrument{
     @Override
     public Note playSound() {
         if(Math.random() < stringBreakChance){
-            return Note.getNullNote();
+            return null;
+            //return Note.getNullNote();
         }
 
         return Note.getRandomNote(getMinNote(), getMaxNote());

@@ -2,7 +2,10 @@ package my_package;
 
 import orchestra_package.*;
 
+import javax.xml.soap.Text;
 import java.util.ArrayList;
+import java.util.Random;
+import java.lang.Thread;
 
 public class MenuController {
 
@@ -186,19 +189,33 @@ public class MenuController {
                 printSettingsPanel();
                 break;
             case 4: // Сыграть всем оркестром
-                System.out.println(orchestra.playAll(isRuNotes));
-                System.out.println("Концерт окончен");
+                orchestraPlay();
                 printOrchestraPanel();
                 break;
-            // 5 не обрабатываем, так как при нём подразумевается выход из программы, а он и так будет, т.к. метод завершится
         }
+    }
+
+    private static void orchestraPlay(){
+        int soundsInSong = orchestra.getRandomSongSoundsNum(); // Количество звуков в общей песне
+
+        for(int i = 0; i < soundsInSong; i++) {
+            System.out.println(orchestra.playSound(isRuNotes));
+            try {
+                Thread.sleep(orchestra.getSongSoundsDelay()); // Задержка между звуками
+            } catch (InterruptedException e){
+                System.out.println(e.toString()); // Иначе не заработает
+            }
+        }
+        System.out.println("Концерт окончен");
     }
 
     // Панель настроек
     private static void printSettingsPanel(){
         String notesFormat = (isRuNotes ? "До-Ре-Ми-Фа-Соль-Ля-Си" : "CDEFGAB");
 
-        TextPanel panel = new TextPanel("Настройки", new String[]{ "Название оркестра: " + orchestra.getName(), "Формат отображения нот: " + notesFormat });
+        TextPanel panel = new TextPanel("Настройки", new String[]{ "Название оркестра: " + orchestra.getName(), "Формат отображения нот: " + notesFormat,
+        "Минимальное количество звуков в песне: " + orchestra.getMinSongSounds(), "Максимальное количество звуков в песне: " + orchestra.getMaxSongSounds(),
+        "Задержка между звуками в песне (в миллисекундах): " + orchestra.getSongSoundsDelay()});
         int choice = panel.getChoice();
 
         switch (choice){
@@ -218,6 +235,26 @@ public class MenuController {
                 int noteFormat = noteFormatPanel.getChoice();
                 isRuNotes = (noteFormat == 1);
                 System.out.println("Формат отображения нот изменён");
+                printSettingsPanel();
+                break;
+            case 3:
+                int minSongSounds = TextPanel.readInt("Введите число");
+                orchestra.setMinSongSounds(minSongSounds);
+                printSettingsPanel();
+                break;
+            case 4:
+                int maxSongSounds;
+                do {
+                    maxSongSounds = TextPanel.readInt("Введите число");
+                    if(maxSongSounds < orchestra.getMinSongSounds())
+                        System.out.println("Максимальное количество звуков в песне должно быть больше минимального");
+                } while (maxSongSounds < orchestra.getMinSongSounds());
+                orchestra.setMaxSongSounds(maxSongSounds);
+                printSettingsPanel();
+                break;
+            case 5:
+                int songSoundsDelay = TextPanel.readInt("Введите число");
+                orchestra.setSongSoundsDelay(songSoundsDelay);
                 printSettingsPanel();
                 break;
         }

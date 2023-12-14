@@ -8,6 +8,10 @@ public class Orchestra {
     private ArrayList<Musician> musicians;
     private ArrayList<MusicInstrument> musicInstruments;
 
+    private int minSongSounds = 5; // Минимальное число звуков в песне
+    private int maxSongSounds = 10; // Максимальное число звуков в песне
+    private int songSoundsDelay = 750; // Задержка между звуками в миллисекундах
+
     public Orchestra(){
         musicInstruments = new ArrayList<MusicInstrument>();
         musicians = new ArrayList<Musician>();
@@ -33,20 +37,30 @@ public class Orchestra {
     public void addMusician(Musician musician){ musicians.add(musician); }
     public void deleteMusicican(Musician musician){ musicians.remove(musician); }
 
-    public String playAll(boolean isRuNotes){
+    public void setSongSoundsDelay(int delay){ songSoundsDelay = delay; }
+    public int getSongSoundsDelay(){ return songSoundsDelay; }
+    public void setMinSongSounds(int sounds){ minSongSounds = sounds; }
+    public int getMinSongSounds(){ return minSongSounds; }
+    public void setMaxSongSounds(int sounds){ maxSongSounds = sounds; }
+    public int getMaxSongSounds(){ return maxSongSounds; }
+    public int getRandomSongSoundsNum(){
+        Random rand = new Random();
+        if(maxSongSounds == minSongSounds)
+            return maxSongSounds;
+        else
+            return rand.nextInt(maxSongSounds - minSongSounds) + minSongSounds + 1;
+    }
+
+    // Сыграть звук песни
+    public String playSound(boolean isRuNotes){
         Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < 10; i++){
-            int musicianInd = random.nextInt(musicians.size());
-            Musician musician = musicians.get(musicianInd);
-            String sound = musician.getInstrument().playInOrchestra(isRuNotes);
-            String msg = musician.getName() + " сыграл на " + musician.getInstrument().getName() + ": " + sound + "\n";
-            //if(sound != null)
-            //    msg = musician.getName() + " сыграл на " + musician.getInstrument().getName() + ": " + sound + "\n";
-            //else
-            //    msg = musician.getName() + " не смог сыграть на " + musician.getInstrument().getName() + "\n";
-            sb.append(msg);
-        }
-        return sb.toString();
+        int musicianInd = random.nextInt(musicians.size());
+        Musician musician = musicians.get(musicianInd);
+        String sound = musician.getInstrument().orchestraPlay(isRuNotes);
+
+        if(sound != null)
+            return musician.getName() + " сыграл на " + musician.getInstrument().getName() + ": " + sound;
+        else
+            return musician.getName() + " не смог сыграть на " + musician.getInstrument().getName();
     }
 }

@@ -17,7 +17,8 @@ public class WindInstrument extends NoteInstrument {
     @Override
     public Note playSound() {
         if(Math.random() < notEnoughBreathChance){
-            return Note.getNullNote();
+            return null;
+            //return Note.getNullNote();
         }
 
         return Note.getRandomNote(getMinNote(), getMaxNote());
