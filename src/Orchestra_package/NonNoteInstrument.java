@@ -1,4 +1,4 @@
-package orchestra_package;
+package Orchestra_package;
 
 import java.util.ArrayList;
 import java.util.Random;

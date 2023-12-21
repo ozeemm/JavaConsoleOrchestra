@@ -1,10 +1,8 @@
-package my_package;
+package Console_menu_package;
 
-import orchestra_package.*;
+import Orchestra_package.*;
 
-import javax.xml.soap.Text;
 import java.util.ArrayList;
-import java.util.Random;
 import java.lang.Thread;
 
 public class MenuController {
@@ -586,15 +584,17 @@ public class MenuController {
 
             ArrayList<String> possibleSounds = NonNoteSound.getPossibleSounds();
 
-            System.out.println("Доступные звуки:");
-            for (int i = 0; i < possibleSounds.size(); i++) {
-                System.out.print(i + 1 + ". ");
-                System.out.println(possibleSounds.get(i).toString());
+            if(actionsChoice != 3) {
+                System.out.println("Доступные звуки:");
+                for (int i = 0; i < possibleSounds.size(); i++) {
+                    System.out.print(i + 1 + ". ");
+                    System.out.println(possibleSounds.get(i).toString());
+                }
             }
 
             if(actionsChoice == 1)
             {
-                System.out.println("Вводите номера звуков, которые хотите добавить инструмету");
+                System.out.println("Вводите номера звуков, которые хотите добавить инструменту");
                 System.out.println("Введите 0 для завершения ввода");
 
                 do{

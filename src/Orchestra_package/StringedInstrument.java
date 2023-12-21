@@ -1,6 +1,4 @@
-package orchestra_package;
-
-import org.w3c.dom.traversal.NodeIterator;
+package Orchestra_package;
 
 public class StringedInstrument extends NoteInstrument{
 

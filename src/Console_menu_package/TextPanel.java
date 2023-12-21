@@ -1,4 +1,4 @@
-package my_package;
+package Console_menu_package;
 
 import java.util.Scanner;
 

@@ -1,4 +1,4 @@
-package orchestra_package;
+package Orchestra_package;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class Note{
         return note;
     }
 
-    private String getRuNote(){
+    public String getRuNote(){
         String ruNote = ruNotes.get(note.charAt(0));
         if(note.length() > 1){
             if(note.charAt(1) == '#')

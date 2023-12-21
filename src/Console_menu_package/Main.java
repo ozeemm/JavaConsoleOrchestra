@@ -1,4 +1,4 @@
-package my_package;
+package Console_menu_package;
 
 // Null - теперь объект, который можно проверить через isNull; Исправить при проигрывании звука и проигрывании всего оркестра
 

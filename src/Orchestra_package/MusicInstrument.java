@@ -1,4 +1,4 @@
-package orchestra_package;
+package Orchestra_package;
 
 public abstract class MusicInstrument {
     private String name;
